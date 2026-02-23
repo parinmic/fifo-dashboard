@@ -2,7 +2,8 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>FIFO Real Time Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Firebase SDK -->
@@ -16,22 +17,32 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            overscroll-behavior: none;
-            -webkit-overflow-scrolling: auto;
+        html {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #F4F7FE;
-            min-height: 100vh;
-            padding: 15px;
-            overflow-x: hidden;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
         }
 
         .container {
             max-width: 1600px;
             margin: 0 auto;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 15px;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: auto;
         }
 
         .main-layout {
@@ -429,7 +440,7 @@
 
         /* Mobile First - Responsive Design */
         @media (max-width: 768px) {
-            body {
+            .container {
                 padding: 8px;
             }
             
@@ -504,7 +515,7 @@
         
         /* Very small screens */
         @media (max-width: 400px) {
-            body {
+            .container {
                 padding: 5px;
             }
             
@@ -1191,6 +1202,28 @@
                 }
             });
         }
+
+        // ป้องกัน bounce บน iOS Safari
+        document.addEventListener('touchmove', function(e) {
+            // อนุญาตให้ scroll ภายใน .results-table-container เท่านั้น
+            let target = e.target;
+            let isScrollable = false;
+            
+            while (target && target !== document.body) {
+                if (target.classList && (
+                    target.classList.contains('results-table-container') ||
+                    target.classList.contains('container')
+                )) {
+                    isScrollable = true;
+                    break;
+                }
+                target = target.parentNode;
+            }
+            
+            if (!isScrollable) {
+                e.preventDefault();
+            }
+        }, { passive: false });
 
         // Start listening for Firebase updates on page load
         loadFromFirebase();
