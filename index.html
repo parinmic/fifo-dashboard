@@ -18,34 +18,29 @@
         }
 
         html {
-            position: fixed;
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            touch-action: none;
+            overflow-x: hidden;
+            overflow-y: auto;
+            overscroll-behavior: none;
         }
 
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #F4F7FE;
             width: 100%;
-            height: 100%;
-            overflow: hidden;
+            min-height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
             padding: 0;
             margin: 0;
-            touch-action: none;
+            overscroll-behavior: none;
         }
 
         .container {
             max-width: 1600px;
             margin: 0 auto;
-            height: 100%;
-            overflow-y: scroll;
-            overflow-x: hidden;
             padding: 15px;
-            -webkit-overflow-scrolling: auto;
-            overscroll-behavior: none;
-            touch-action: pan-y;
         }
 
         .main-layout {
