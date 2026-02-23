@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFO Real Time Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F4F7FE;
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .left-panel {
+            flex-shrink: 0;
+        }
+
+        .right-panel {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .mas-sku-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(67, 24, 255, 0.08);
+        }
+
+        .mas-sku-title {
+            font-size: 1em;
+            font-weight: 600;
+            color: #2B3674;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mas-sku-table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .mas-sku-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8em;
+        }
+
+        .mas-sku-table th {
+            background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+
+        .mas-sku-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #E9EDF7;
+            color: #2B3674;
+        }
+
+        .mas-sku-table tr:hover {
+            background: #F4F7FE;
+        }
+
+        .mas-sku-table tr:nth-child(even) {
+            background: #FAFCFE;
+        }
+
+        .mas-sku-table tr:nth-child(even):hover {
+            background: #F4F7FE;
+        }
+
+        .sku-count {
+            font-size: 0.75em;
+            color: #A3AED0;
+            font-weight: normal;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(67, 24, 255, 0.08);
+            margin-top: 25px;
+        }
+
+        .results-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #2B3674;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-table-container {
+            max-height: 500px;
+            overflow: auto;
+            border-radius: 12px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            font-size: 0.8em;
+            background: white;
+        }
+
+        .results-table th {
+            background: #7551FF;
+            color: white;
+            padding: 12px 10px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            white-space: nowrap;
+            font-weight: 600;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            -webkit-box-shadow: none !important;
+        }
+
+        .results-table thead tr:first-child th {
+            background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
+        }
+
+        .results-table thead tr:first-child th[rowspan="2"] {
+            background: linear-gradient(180deg, #4318FF 0%, #7551FF 50%, #7551FF 100%);
+        }
+
+        .results-table thead tr:nth-child(2) th {
+            top: 42px;
+            z-index: 1;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .results-table thead tr:nth-child(2) {
+            background: #7551FF;
+        }
+
+        .results-table th.sub-header {
+            background: #7551FF;
+            font-size: 0.9em;
+            font-weight: 500;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            margin: 0;
+            padding: 12px 10px;
+        }
+
+        .results-table thead {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        .results-table thead tr {
+            border: none !important;
+            border-spacing: 0;
+        }
+
+        .results-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #E9EDF7;
+            text-align: center;
+            color: #2B3674;
+        }
+
+        .results-table td.left {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .results-table tr:hover {
+            background: #F4F7FE;
+        }
+
+        .results-table tr:nth-child(even) {
+            background: #FAFCFE;
+        }
+
+        .results-table tr:nth-child(even):hover {
+            background: #F4F7FE;
+        }
+
+        .no-data {
+            color: #A3AED0;
+            font-style: italic;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .status-pending {
+            background: #FEF3C7 !important;
+            color: #92400E;
+            font-weight: 600;
+        }
+
+        .status-fifo {
+            background: #FEE2E2 !important;
+            color: #991B1B;
+            font-weight: 600;
+        }
+
+        h1 {
+            text-align: left;
+            color: #2B3674;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .upload-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            max-width: 100%;
+        }
+
+        .upload-box {
+            background: #F4F7FE;
+            border: 1px solid #E9EDF7;
+            border-radius: 8px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .upload-box:hover {
+            border-color: #4318FF;
+            background: #FAFCFE;
+        }
+
+        .upload-box-title {
+            font-size: 0.7em;
+            font-weight: 500;
+            color: #A3AED0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            min-width: auto;
+        }
+
+        .upload-box-number {
+            background: #A3AED0;
+            color: white;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65em;
+            flex-shrink: 0;
+        }
+
+        .upload-area {
+            border: 1px dashed #A3AED0;
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-width: 60px;
+        }
+
+        .upload-area:hover {
+            border-color: #4318FF;
+            background: #F4F7FE;
+        }
+
+        .upload-area.dragover {
+            border-color: #4318FF;
+            background: #EDE7FE;
+        }
+
+        .upload-area.has-file {
+            border-color: #22C55E;
+            border-style: solid;
+            background: #F0FDF4;
+        }
+
+        .upload-icon {
+            font-size: 12px;
+        }
+
+        .upload-text {
+            font-size: 0.65em;
+            color: #A3AED0;
+        }
+
+        .upload-hint {
+            display: none;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #22C55E;
+            font-size: 0.65em;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-sheets {
+            display: none;
+        }
+
+        .status-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+        }
+
+        .status-text {
+            font-size: 0.7em;
+            color: #A3AED0;
+        }
+
+        .status-count {
+            font-weight: 600;
+            color: #4318FF;
+        }
+
+        .process-btn {
+            background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 12px;
+            cursor: pointer;
+            font-size: 0.7em;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .process-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(67, 24, 255, 0.3);
+        }
+
+        .process-btn:disabled {
+            background: #E9EDF7;
+            color: #A3AED0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .upload-grid {
+                max-width: 100%;
+            }
+            
+            .status-section {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FIFO Real Time Dashboard</h1>
+        
+        <div class="upload-grid">
+            <div class="upload-box">
+                <div class="upload-box-title"><span class="upload-box-number">1</span> ต้นวัน 0010</div>
+                <div class="upload-area" id="dropZone0" data-index="0">
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text">เลือก</span>
+                </div>
+                <input type="file" class="file-input" id="fileInput0" data-index="0" accept=".xlsx,.xls,.csv">
+            </div>
+            
+            <div class="upload-box">
+                <div class="upload-box-title"><span class="upload-box-number">2</span> ต้นวัน 20</div>
+                <div class="upload-area" id="dropZone1" data-index="1">
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text">เลือก</span>
+                </div>
+                <input type="file" class="file-input" id="fileInput1" data-index="1" accept=".xlsx,.xls,.csv">
+            </div>
+            
+            <div class="upload-box">
+                <div class="upload-box-title"><span class="upload-box-number">3</span> ตอนนี้ 0010</div>
+                <div class="upload-area" id="dropZone2" data-index="2">
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text">เลือก</span>
+                </div>
+                <input type="file" class="file-input" id="fileInput2" data-index="2" accept=".xlsx,.xls,.csv">
+            </div>
+            
+            <div class="upload-box">
+                <div class="upload-box-title"><span class="upload-box-number">4</span> ตอนนี้ 20</div>
+                <div class="upload-area" id="dropZone3" data-index="3">
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text">เลือก</span>
+                </div>
+                <input type="file" class="file-input" id="fileInput3" data-index="3" accept=".xlsx,.xls,.csv">
+            </div>
+            
+            <div class="upload-box">
+                <div class="upload-box-title"><span class="upload-box-number">5</span> ยอดจ่าย</div>
+                <div class="upload-area" id="dropZone4" data-index="4">
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text">เลือก</span>
+                </div>
+                <input type="file" class="file-input" id="fileInput4" data-index="4" accept=".xlsx,.xls,.csv">
+            </div>
+            
+            <div class="status-section">
+                <span class="status-text"><span class="status-count" id="uploadCount">0</span>/5</span>
+                <button class="process-btn" id="processBtn" onclick="processData()">ประมวลผล</button>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="results-section">
+            <div class="results-title" id="resultsTitle">การ FIFO จ่ายสินค้า</div>
+            <div class="results-table-container">
+                <table class="results-table" cellspacing="0" cellpadding="0">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">ชื่อสินค้า</th>
+                            <th rowspan="2">ยอดจ่าย</th>
+                            <th colspan="4">STOCK ต้นวัน</th>
+                            <th colspan="4">STOCK ตอนนี้</th>
+                            <th colspan="4">สินค้าหลุดจ่าย FIFO</th>
+                            <th rowspan="2">ทะเบียนรถขนส่ง</th>
+                            <th rowspan="2">สถานะ</th>
+                        </tr>
+                        <tr>
+                            <th class="sub-header">1 วัน</th>
+                            <th class="sub-header">2 วัน</th>
+                            <th class="sub-header">3 วัน</th>
+                            <th class="sub-header">4 วัน</th>
+                            <th class="sub-header">1 วัน</th>
+                            <th class="sub-header">2 วัน</th>
+                            <th class="sub-header">3 วัน</th>
+                            <th class="sub-header">4 วัน</th>
+                            <th class="sub-header">1 วัน</th>
+                            <th class="sub-header">2 วัน</th>
+                            <th class="sub-header">3 วัน</th>
+                            <th class="sub-header">4 วัน</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                        <tr><td colspan="16" class="no-data">กรุณาอัพโหลดไฟล์และกดปุ่ม "ประมวลผล"</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mas_SKU Data (hardcoded from Mas_SKU.xlsx)
+        const MAS_SKU = [
+            {warehouse: "10", code: "23015290", name: "ชิ้นเนื้อติดกระดูก"},
+            {warehouse: "10", code: "23045518", name: "มันเปลว เบอร์ 1"},
+            {warehouse: "10", code: "23057677", name: "สามชั้นTT"},
+            {warehouse: "10", code: "23015269", name: "เศษซี่โครง"},
+            {warehouse: "10", code: "23057702", name: "กระดูกอกTT"},
+            {warehouse: "10", code: "23057680", name: "ขาหลังTT"},
+            {warehouse: "10", code: "23000167", name: "กระดูกขาเลาะ"},
+            {warehouse: "10", code: "23057696", name: "เศษมันTT"},
+            {warehouse: "10", code: "23064091", name: "มันแข็งติดหนัง TT"},
+            {warehouse: "10", code: "23000127", name: "เนื้อไหล่ติดหนัง"},
+            {warehouse: "10", code: "23057672", name: "ไหล่TT"},
+            {warehouse: "10", code: "23063342", name: "ไหล่บดTT"},
+            {warehouse: "10", code: "23065140", name: "สะโพกสไลด์"},
+            {warehouse: "10", code: "23069300", name: "ชิ้นเนื้อหมูบดTT"},
+            {warehouse: "10", code: "23057671", name: "คอหมูย่างTT"},
+            {warehouse: "10", code: "23015265", name: "ซี่โครงหั่นชิ้น"},
+            {warehouse: "10", code: "23057700", name: "ซี่โครงTT"},
+            {warehouse: "10", code: "23057675", name: "สันในTT"},
+            {warehouse: "10", code: "23057676", name: "สันคอTT"},
+            {warehouse: "10", code: "23065142", name: "สันคอสไลด์"},
+            {warehouse: "10", code: "23057674", name: "สันนอกTT"},
+            {warehouse: "10", code: "23065141", name: "สันนอกสไลด์"},
+            {warehouse: "10", code: "23096254", name: "สามชั้นTT(XL)"},
+            {warehouse: "10", code: "23039556", name: "หมูบดปนมัน 30%"},
+            {warehouse: "10", code: "23057698", name: "หมูบดTT"},
+            {warehouse: "10", code: "23000203", name: "ชิ้นมันแข็ง"},
+            {warehouse: "10", code: "23000206", name: "ชิ้นมันคอ"},
+            {warehouse: "10", code: "23057697", name: "ชิ้นมันคอTT"},
+            {warehouse: "10", code: "23067921", name: "เศษมันติดหนังTT"},
+            {warehouse: "10", code: "23063344", name: "เศษหนังTT"},
+            {warehouse: "10", code: "23057693", name: "กระดูกแว่นTT"},
+            {warehouse: "10", code: "23057689", name: "กระดูกข้อTT"},
+            {warehouse: "10", code: "23057688", name: "กระดูกซุปTT"},
+            {warehouse: "10", code: "23057690", name: "กระดูกอ่อนTT"},
+            {warehouse: "10", code: "23000168", name: "เนื้อขาเลาะ"},
+            {warehouse: "10", code: "23057679", name: "ขาหน้าTT"},
+            {warehouse: "10", code: "23063196", name: "ขาหน้าเผาTT"},
+            {warehouse: "10", code: "23019173", name: "ขาหลังเผาแบ่งคากิ"},
+            {warehouse: "10", code: "23063197", name: "ขาหลังเผาTT"},
+            {warehouse: "10", code: "23014036", name: "คากิเผา"},
+            {warehouse: "10", code: "23015313", name: "คากิ"},
+            {warehouse: "10", code: "23057691", name: "มันเปลวTT"},
+            {warehouse: "10", code: "23057685", name: "มันแข็งTT"},
+            {warehouse: "10", code: "23057695", name: "มันท้องTT"},
+            {warehouse: "10", code: "23057684", name: "มันสันหลังTT"},
+            {warehouse: "10", code: "23000172", name: "ลิ้นหมู"},
+            {warehouse: "10", code: "23057687", name: "หนังหมูรวมTT"},
+            {warehouse: "10", code: "23071823", name: "หนังขาหมู"},
+            {warehouse: "10", code: "23015378", name: "หนังสะโพกติดมัน"},
+            {warehouse: "10", code: "23057681", name: "หางหมูTT"},
+            {warehouse: "10", code: "23000175", name: "หน้ากากหมู"},
+            {warehouse: "10", code: "23105854", name: "ไหล่หมู B2B (Basic)"},
+            {warehouse: "10", code: "23105855", name: "สะโพกหมู B2B (Basic)"},
+            {warehouse: "10", code: "23105856", name: "สันนอกหมู B2B (Basic)"},
+            {warehouse: "20", code: "23000194", name: "ไต"},
+            {warehouse: "20", code: "23000192", name: "ไส้ใหญ่(ลวก)"},
+            {warehouse: "20", code: "23015350", name: "ไส้ใหญ่"},
+            {warehouse: "20", code: "23000181", name: "ไส้ขม"},
+            {warehouse: "20", code: "23014042", name: "ไส้ตันลวก"},
+            {warehouse: "20", code: "23015346", name: "ไส้ตัน"},
+            {warehouse: "20", code: "23000191", name: "ไส้อ่อน"},
+            {warehouse: "20", code: "23000189", name: "กระเพาะ"},
+            {warehouse: "20", code: "23015342", name: "กระเพาะลวก"},
+            {warehouse: "20", code: "23000186", name: "ขั้วตับ"},
+            {warehouse: "20", code: "23000188", name: "ตับหมู"},
+            {warehouse: "20", code: "23000187", name: "ปอด"},
+            {warehouse: "20", code: "23000193", name: "ม้าม"},
+            {warehouse: "20", code: "23000190", name: "หัวใจหมู"},
+            {warehouse: "20", code: "23015321", name: "หัวติดลิ้น"}
+        ];
+
+        const MAX_FILES = 5;
+        let uploadedFiles = new Array(MAX_FILES).fill(null); // Array of { name, workbook } or null
+
+        const uploadCount = document.getElementById('uploadCount');
+
+        // Initialize all upload areas
+        for (let i = 0; i < MAX_FILES; i++) {
+            const dropZone = document.getElementById(`dropZone${i}`);
+            const fileInput = document.getElementById(`fileInput${i}`);
+
+            // Click to upload
+            dropZone.addEventListener('click', (e) => {
+                fileInput.click();
+            });
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFile(e.target.files[0], i);
+                    fileInput.value = '';
+                }
+            });
+
+            // Drag and drop
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    handleFile(e.dataTransfer.files[0], i);
+                }
+            });
+        }
+
+        function handleFile(file, index) {
+            const extension = file.name.split('.').pop().toLowerCase();
+            if (!['xlsx', 'xls', 'csv'].includes(extension)) {
+                alert('กรุณาเลือกไฟล์ Excel (.xlsx, .xls) หรือ CSV เท่านั้น');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    let workbook;
+                    
+                    // สำหรับไฟล์ CSV ใช้ encoding TIS-620 (cp874) สำหรับภาษาไทย
+                    if (extension === 'csv') {
+                        const decoder = new TextDecoder('windows-874');
+                        const text = decoder.decode(new Uint8Array(e.target.result));
+                        workbook = XLSX.read(text, { type: 'string' });
+                    } else {
+                        const data = new Uint8Array(e.target.result);
+                        workbook = XLSX.read(data, { type: 'array' });
+                    }
+                    
+                    uploadedFiles[index] = {
+                        name: file.name,
+                        workbook: workbook
+                    };
+                    
+                    renderUploadArea(index);
+                    updateCount();
+                    
+                    // Re-enable process button when new file is uploaded
+                    document.getElementById('processBtn').disabled = false;
+                } catch (error) {
+                    alert('เกิดข้อผิดพลาดในการอ่านไฟล์: ' + error.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function renderUploadArea(index) {
+            const dropZone = document.getElementById(`dropZone${index}`);
+            const file = uploadedFiles[index];
+
+            if (file) {
+                dropZone.classList.add('has-file');
+                // Show short filename (max 10 chars)
+                const shortName = file.name.length > 12 ? file.name.substring(0, 10) + '...' : file.name;
+                dropZone.innerHTML = `
+                    <span class="upload-icon">✓</span>
+                    <span class="file-name" title="${escapeHtml(file.name)}">${escapeHtml(shortName)}</span>
+                `;
+            } else {
+                dropZone.classList.remove('has-file');
+                dropZone.innerHTML = `
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text">เลือก</span>
+                `;
+            }
+        }
+
+        function updateCount() {
+            const count = uploadedFiles.filter(f => f !== null).length;
+            uploadCount.textContent = count;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Process data and do lookup
+        function processData() {
+            const file0 = uploadedFiles[0]; // STOCK ต้นวัน 0010
+            const file1 = uploadedFiles[1]; // STOCK ต้นวัน 20
+            const file2 = uploadedFiles[2]; // STOCK ตอนนี้ 0010
+            const file3 = uploadedFiles[3]; // STOCK ตอนนี้ 20
+            const file4 = uploadedFiles[4]; // ยอดจ่ายสินค้า
+            
+            if (!file0 && !file1 && !file2 && !file3) {
+                alert('กรุณาอัพโหลดไฟล์อย่างน้อย 1 ไฟล์');
+                return;
+            }
+
+            try {
+                // Build stock maps
+                const stockMapStart10 = file0 ? processStockFile(file0) : {};
+                const stockMapStart20 = file1 ? processStockFile(file1) : {};
+                const stockMapNow10 = file2 ? processStockFile(file2) : {};
+                const stockMapNow20 = file3 ? processStockFile(file3) : {};
+                const dispatchData = file4 ? processDispatchFile(file4) : { dispatchMap: {}, truckMap: {} };
+                const dispatchMap = dispatchData.dispatchMap;
+                const truckMap = dispatchData.truckMap;
+                
+                const allResults = [];
+                
+                // Process warehouse 10
+                const results10 = getResultsForWarehouse(stockMapStart10, stockMapNow10, dispatchMap, truckMap, "10");
+                allResults.push(...results10);
+                
+                // Process warehouse 20
+                const results20 = getResultsForWarehouse(stockMapStart20, stockMapNow20, dispatchMap, truckMap, "20");
+                allResults.push(...results20);
+                
+                // Render combined results
+                renderResults(allResults);
+                
+                // Update title with date/time
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('resultsTitle').textContent = `การ FIFO จ่ายสินค้า อัพเดท ${dateStr} ${timeStr}`;
+                
+                // Disable button after processing
+                document.getElementById('processBtn').disabled = true;
+                
+            } catch (error) {
+                alert('เกิดข้อผิดพลาดในการประมวลผล: ' + error.message);
+                console.error(error);
+            }
+        }
+        
+        function processStockFile(file) {
+            const workbook = file.workbook;
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            
+            // Convert sheet to array (include headers)
+            const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            
+            // Column indices for weight data (based on analysis):
+            // Col 9: น้ำหนัก (1-1 วัน)
+            // Col 12: น้ำหนัก (2-2 วัน)
+            // Col 15: น้ำหนัก (3-3 วัน)
+            // Col 18: น้ำหนัก (> 3 วัน)
+            // Col 20: รหัส SAP (ต้องตัด 0 นำหน้า 10 ตัวแรกออก)
+            
+            const WEIGHT_COLS = {
+                day1: 9,
+                day2: 12,
+                day3: 15,
+                moreThan3: 18
+            };
+            const SAP_COL = 20; // รหัส SAP
+            
+            // Build lookup map from file data (skip first 2 header rows)
+            const stockMap = {};
+            for (let i = 2; i < rawData.length; i++) {
+                const row = rawData[i];
+                if (!row || !row[SAP_COL]) continue;
+                
+                // รหัส SAP เช่น "000000000023034408" ตัด 10 ตัวแรกออก -> "23034408"
+                const sapCode = String(row[SAP_COL]).trim();
+                const skuCode = sapCode.length > 10 ? sapCode.substring(10) : sapCode;
+                
+                stockMap[skuCode] = {
+                    day1: parseFloat(row[WEIGHT_COLS.day1]) || 0,
+                    day2: parseFloat(row[WEIGHT_COLS.day2]) || 0,
+                    day3: parseFloat(row[WEIGHT_COLS.day3]) || 0,
+                    moreThan3: parseFloat(row[WEIGHT_COLS.moreThan3]) || 0
+                };
+            }
+            
+            return stockMap;
+        }
+        
+        // Process dispatch file (ยอดจ่ายสินค้า CSV)
+        function processDispatchFile(file) {
+            const workbook = file.workbook;
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            
+            // Convert sheet to array
+            const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            
+            // CSV มี row แรกเป็นชื่อบริษัท, row ที่ 2 เป็น header
+            // Column U (index 20) = rProduct_code = รหัสสินค้า
+            // Column AD (index 29) = rAllocate_stock_wgt = ปริมาณยอดจ่าย
+            // Column BN (index 65) = ทะเบียนรถขนส่ง
+            const PRODUCT_CODE_COL = 20;
+            const DISPATCH_QTY_COL = 29;
+            const TRUCK_PLATE_COL = 65;
+            
+            const dispatchMap = {};
+            const truckMap = {}; // SKU -> array of truck plates (where AD=0)
+            
+            // เริ่มจาก row 2 (skip header rows)
+            for (let i = 2; i < rawData.length; i++) {
+                const row = rawData[i];
+                if (!row || !row[PRODUCT_CODE_COL]) continue;
+                
+                const productCode = String(row[PRODUCT_CODE_COL]).trim();
+                const dispatchQty = parseFloat(row[DISPATCH_QTY_COL]) || 0;
+                // เอาเฉพาะตัวเลขจากทะเบียนรถ
+                const rawTruckPlate = row[TRUCK_PLATE_COL] ? String(row[TRUCK_PLATE_COL]).trim() : '';
+                const truckPlate = rawTruckPlate.replace(/[^0-9]/g, '');
+                
+                // สะสมยอดจ่ายถ้ามีหลาย row สำหรับรหัสเดียวกัน
+                if (dispatchMap[productCode]) {
+                    dispatchMap[productCode] += dispatchQty;
+                } else {
+                    dispatchMap[productCode] = dispatchQty;
+                }
+                
+                // เก็บทะเบียนรถสำหรับแถวที่ AD=0 (ยังไม่ได้จ่ายจริง)
+                if (dispatchQty === 0 && truckPlate) {
+                    if (!truckMap[productCode]) {
+                        truckMap[productCode] = new Set();
+                    }
+                    truckMap[productCode].add(truckPlate);
+                }
+            }
+            
+            // Convert Sets to Arrays
+            const truckMapArray = {};
+            for (const code in truckMap) {
+                truckMapArray[code] = Array.from(truckMap[code]);
+            }
+            
+            console.log('Dispatch Map:', Object.keys(dispatchMap).length, 'products');
+            console.log('Truck Map:', Object.keys(truckMapArray).length, 'products with pending trucks');
+            return { dispatchMap, truckMap: truckMapArray };
+        }
+        
+        function getResultsForWarehouse(stockMapStart, stockMapNow, dispatchMap, truckMap, warehouseFilter) {
+            const filteredSKU = MAS_SKU.filter(item => item.warehouse === warehouseFilter);
+            const results = [];
+            
+            filteredSKU.forEach((item) => {
+                const startData = stockMapStart[item.code];
+                const nowData = stockMapNow[item.code];
+                const dispatchQty = dispatchMap[item.code] || null;
+                const trucks = truckMap[item.code] || [];
+                results.push({
+                    warehouse: item.warehouse,
+                    code: item.code,
+                    name: item.name,
+                    // STOCK ต้นวัน
+                    startDay1: startData ? startData.day1 : null,
+                    startDay2: startData ? startData.day2 : null,
+                    startDay3: startData ? startData.day3 : null,
+                    startMoreThan3: startData ? startData.moreThan3 : null,
+                    // STOCK ตอนนี้
+                    nowDay1: nowData ? nowData.day1 : null,
+                    nowDay2: nowData ? nowData.day2 : null,
+                    nowDay3: nowData ? nowData.day3 : null,
+                    nowMoreThan3: nowData ? nowData.moreThan3 : null,
+                    // ยอดจ่าย
+                    dispatch: dispatchQty,
+                    // ทะเบียนรถ (AD=0)
+                    trucks: trucks,
+                    foundStart: !!startData,
+                    foundNow: !!nowData,
+                    foundDispatch: dispatchQty !== null
+                });
+            });
+            
+            return results;
+        }
+
+        function renderResults(results) {
+            const tbody = document.getElementById('resultsTableBody');
+            const formatVal = (val) => val !== null ? Math.floor(val) : '-';
+            
+            const calcDiff = (now, expected) => {
+                const nowVal = now !== null ? now : 0;
+                const expVal = expected !== null ? expected : 0;
+                const diff = nowVal - expVal;
+                return diff < 0 ? 0 : Math.floor(diff);
+            };
+            
+            // Process all items and calculate FIFO data
+            const processedItems = [];
+            
+            results.forEach((item) => {
+                // คำนวณสินค้าคงเหลือ (FIFO - ลบจากอายุมากสุดก่อน)
+                let remaining = {
+                    day1: item.startDay1 !== null ? item.startDay1 : 0,
+                    day2: item.startDay2 !== null ? item.startDay2 : 0,
+                    day3: item.startDay3 !== null ? item.startDay3 : 0,
+                    moreThan3: item.startMoreThan3 !== null ? item.startMoreThan3 : 0
+                };
+                
+                let dispatchLeft = item.dispatch !== null ? item.dispatch : 0;
+                
+                // ลบจาก >3วัน ก่อน
+                if (dispatchLeft > 0 && remaining.moreThan3 > 0) {
+                    const deduct = Math.min(dispatchLeft, remaining.moreThan3);
+                    remaining.moreThan3 -= deduct;
+                    dispatchLeft -= deduct;
+                }
+                // ลบจาก 3วัน
+                if (dispatchLeft > 0 && remaining.day3 > 0) {
+                    const deduct = Math.min(dispatchLeft, remaining.day3);
+                    remaining.day3 -= deduct;
+                    dispatchLeft -= deduct;
+                }
+                // ลบจาก 2วัน
+                if (dispatchLeft > 0 && remaining.day2 > 0) {
+                    const deduct = Math.min(dispatchLeft, remaining.day2);
+                    remaining.day2 -= deduct;
+                    dispatchLeft -= deduct;
+                }
+                // ลบจาก 1วัน
+                if (dispatchLeft > 0 && remaining.day1 > 0) {
+                    const deduct = Math.min(dispatchLeft, remaining.day1);
+                    remaining.day1 -= deduct;
+                    dispatchLeft -= deduct;
+                }
+                
+                const hasStartData = item.startDay1 !== null || item.startDay2 !== null || item.startDay3 !== null || item.startMoreThan3 !== null;
+                const hasNowData = item.nowDay1 !== null || item.nowDay2 !== null || item.nowDay3 !== null || item.nowMoreThan3 !== null;
+                
+                const diffDay1 = calcDiff(item.nowDay1, remaining.day1);
+                const diffDay2 = calcDiff(item.nowDay2, remaining.day2);
+                const diffDay3 = calcDiff(item.nowDay3, remaining.day3);
+                const diffMoreThan3 = calcDiff(item.nowMoreThan3, remaining.moreThan3);
+                const canShowDiff = hasStartData && hasNowData;
+                
+                const hasNonZeroDiff = diffDay1 > 0 || diffDay2 > 0 || diffDay3 > 0 || diffMoreThan3 > 0;
+                if (!canShowDiff || !hasNonZeroDiff) return;
+                
+                const hasTrucks = item.trucks && item.trucks.length > 0;
+                const totalDiff = diffDay1 + diffDay2 + diffDay3 + diffMoreThan3;
+                
+                processedItems.push({
+                    ...item,
+                    diffDay1, diffDay2, diffDay3, diffMoreThan3,
+                    totalDiff,
+                    hasTrucks,
+                    trucksDisplay: hasTrucks ? item.trucks.join(', ') : '-'
+                });
+            });
+            
+            // Sort: รอจ่าย first, then by total FIFO diff descending
+            processedItems.sort((a, b) => {
+                // รอจ่าย (hasTrucks=true) comes first
+                if (a.hasTrucks !== b.hasTrucks) {
+                    return a.hasTrucks ? -1 : 1;
+                }
+                // Then sort by total FIFO diff descending
+                return b.totalDiff - a.totalDiff;
+            });
+            
+            // Render sorted items
+            let html = '';
+            processedItems.forEach((item) => {
+                const statusClass = item.hasTrucks ? 'status-pending' : 'status-fifo';
+                const statusText = item.hasTrucks ? 'รอจ่าย' : 'หลุด FIFO';
+                
+                html += `<tr>
+                    <td class="left">${escapeHtml(item.name)}</td>
+                    <td>${formatVal(item.dispatch)}</td>
+                    <td>${formatVal(item.startDay1)}</td>
+                    <td>${formatVal(item.startDay2)}</td>
+                    <td>${formatVal(item.startDay3)}</td>
+                    <td>${formatVal(item.startMoreThan3)}</td>
+                    <td>${formatVal(item.nowDay1)}</td>
+                    <td>${formatVal(item.nowDay2)}</td>
+                    <td>${formatVal(item.nowDay3)}</td>
+                    <td>${formatVal(item.nowMoreThan3)}</td>
+                    <td>${item.diffDay1}</td>
+                    <td>${item.diffDay2}</td>
+                    <td>${item.diffDay3}</td>
+                    <td>${item.diffMoreThan3}</td>
+                    <td class="left">${escapeHtml(item.trucksDisplay)}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                </tr>`;
+            });
+            
+            if (processedItems.length === 0) {
+                html = '<tr><td colspan="16" class="no-data">ไม่พบสินค้าที่หลุดจ่าย FIFO</td></tr>';
+            }
+            
+            tbody.innerHTML = html;
+            console.log(`Rendered ${processedItems.length} SKUs with FIFO issues`);
+        }
+    </script>
+</body>
+</html>
