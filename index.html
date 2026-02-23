@@ -129,6 +129,9 @@
             margin-top: 25px;
             overflow: visible;
             position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .results-title {
@@ -142,7 +145,7 @@
         }
 
         .results-table-container {
-            max-height: 500px;
+            max-height: calc(100vh - 180px);
             overflow: auto;
             border-radius: 12px;
             overscroll-behavior: none;
@@ -175,16 +178,16 @@
         /* กำหนดความกว้างคอลัมน์ */
         .results-table th:first-child,
         .results-table td:nth-child(1) { width: 150px; min-width: 150px; max-width: 150px; } /* ชื่อสินค้า - fixed width for sticky */
-        .results-table tbody td:nth-child(2) { width: 7%; } /* ยอดสั่ง */
-        .results-table tbody td:nth-child(3) { width: 7%; } /* ยอดจ่าย */
+        .results-table tbody td:nth-child(2) { width: 6%; } /* ยอดสั่ง */
+        .results-table tbody td:nth-child(3) { width: 6%; } /* จ่ายแล้ว */
         .results-table tbody td:nth-child(4),
         .results-table tbody td:nth-child(5),
         .results-table tbody td:nth-child(6),
         .results-table tbody td:nth-child(7),
         .results-table tbody td:nth-child(8),
-        .results-table tbody td:nth-child(9) { width: 7%; } /* STOCK & FIFO */
-        .results-table tbody td:nth-child(10) { width: 13%; } /* ทะเบียนรถ */
-        .results-table tbody td:nth-child(11) { width: 11%; } /* สถานะ */
+        .results-table tbody td:nth-child(9) { width: 5%; } /* STOCK & FIFO */
+        .results-table tbody td:nth-child(10) { width: 18%; } /* ทะเบียนรถ */
+        .results-table tbody td:nth-child(11) { width: 10%; } /* สถานะ */
 
         .results-table thead tr:first-child th {
             background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
@@ -304,6 +307,12 @@
         }
 
         .status-fifo {
+            background: #FEE2E2 !important;
+            color: #991B1B;
+            font-weight: 600;
+        }
+
+        .fifo-alert {
             background: #FEE2E2 !important;
             color: #991B1B;
             font-weight: 600;
@@ -489,6 +498,7 @@
                 border-radius: 12px;
                 margin-top: 0;
                 overflow: visible;
+                height: calc(100vh - 80px);
             }
             
             .results-title {
@@ -500,7 +510,7 @@
             }
             
             .results-table-container {
-                max-height: 70vh;
+                max-height: calc(100vh - 130px);
                 border-radius: 8px;
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior: none;
@@ -659,16 +669,17 @@
             <div class="results-table-container">
                 <table class="results-table" cellspacing="0" cellpadding="0">
                     <colgroup>
+                        <col style="width: 150px;">
+                        <col style="width: 6%;">
+                        <col style="width: 6%;">
+                        <col style="width: 5%;">
+                        <col style="width: 5%;">
+                        <col style="width: 5%;">
+                        <col style="width: 5%;">
+                        <col style="width: 5%;">
+                        <col style="width: 5%;">
                         <col style="width: 18%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 14%;">
-                        <col style="width: 12%;">
+                        <col style="width: 10%;">
                     </colgroup>
                     <thead>
                         <tr>
@@ -1189,9 +1200,9 @@
                     <td>${formatVal(item.nowDay1)}</td>
                     <td>${formatVal(item.nowDay2)}</td>
                     <td>${formatVal(item.nowDay3)}</td>
-                    <td>${item.diffDay1}</td>
-                    <td>${item.diffDay2}</td>
-                    <td>${item.diffDay3}</td>
+                    <td class="${item.diffDay1 > 0 ? 'fifo-alert' : ''}">${item.diffDay1}</td>
+                    <td class="${item.diffDay2 > 0 ? 'fifo-alert' : ''}">${item.diffDay2}</td>
+                    <td class="${item.diffDay3 > 0 ? 'fifo-alert' : ''}">${item.diffDay3}</td>
                     <td class="left">${escapeHtml(item.trucksDisplay)}</td>
                     <td class="${statusClass}">${statusText}</td>
                 </tr>`;
