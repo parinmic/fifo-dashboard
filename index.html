@@ -319,6 +319,28 @@
             font-weight: 600;
         }
 
+        /* เส้นแบ่งกลุ่มคอลัมน์ */
+        .results-table th:nth-child(3),
+        .results-table td:nth-child(3) {
+            border-right: 2px solid rgba(0,0,0,0.1);
+        }
+        .results-table th:nth-child(6),
+        .results-table td:nth-child(6) {
+            border-right: 2px solid rgba(0,0,0,0.1);
+        }
+        .results-table th:nth-child(9),
+        .results-table td:nth-child(9) {
+            border-right: 2px solid rgba(0,0,0,0.1);
+        }
+        .results-table th:nth-child(12),
+        .results-table td:nth-child(12) {
+            border-right: 2px solid rgba(0,0,0,0.1);
+        }
+        .results-table th:nth-child(15),
+        .results-table td:nth-child(15) {
+            border-right: 2px solid rgba(0,0,0,0.1);
+        }
+
         h1 {
             text-align: left;
             color: #2B3674;
@@ -987,23 +1009,88 @@
                 moreThan3: 18
             };
             const SAP_COL = 20; // รหัส SAP
+            const NAME_COL = 1; // ชื่อสินค้า
+            const WAREHOUSE_COL = 22; // Column W (index 22) = คลังสินค้า/Plant
+            
+            // ตรวจสอบว่าเป็นไฟล์ warehouse 20 หรือไม่ (จากชื่อไฟล์)
+            const isWarehouse20 = file.name.includes('20');
             
             // Build lookup map from file data (skip first 2 header rows)
             const stockMap = {};
+            const skippedRows = [];
+            let processedCount = 0;
+            
             for (let i = 2; i < rawData.length; i++) {
                 const row = rawData[i];
                 if (!row || !row[SAP_COL]) continue;
                 
+                // ถ้าเป็นไฟล์ warehouse 20 ให้กรองเฉพาะ row ที่คอลัมน์ W = "20"
+                if (isWarehouse20 && row[WAREHOUSE_COL]) {
+                    const warehouseValue = String(row[WAREHOUSE_COL]).trim();
+                    const warehouseNum = parseFloat(warehouseValue);
+                    
+                    // เช็คว่าเป็น "20" (string) หรือ 20 (number) หรือ 20.0
+                    if (warehouseValue !== "20" && warehouseNum !== 20) {
+                        skippedRows.push({
+                            row: i,
+                            warehouse: warehouseValue,
+                            product: row[NAME_COL] ? String(row[NAME_COL]) : ''
+                        });
+                        continue; // ข้าม row นี้
+                    }
+                }
+                
                 // รหัส SAP เช่น "000000000023034408" ตัด 10 ตัวแรกออก -> "23034408"
                 const sapCode = String(row[SAP_COL]).trim();
                 const skuCode = sapCode.length > 10 ? sapCode.substring(10) : sapCode;
+                const productName = row[NAME_COL] ? String(row[NAME_COL]) : '';
                 
-                stockMap[skuCode] = {
-                    day1: parseFloat(row[WEIGHT_COLS.day1]) || 0,
-                    day2: parseFloat(row[WEIGHT_COLS.day2]) || 0,
-                    day3: parseFloat(row[WEIGHT_COLS.day3]) || 0,
-                    moreThan3: parseFloat(row[WEIGHT_COLS.moreThan3]) || 0
-                };
+                const day1 = parseFloat(row[WEIGHT_COLS.day1]) || 0;
+                const day2 = parseFloat(row[WEIGHT_COLS.day2]) || 0;
+                const day3 = parseFloat(row[WEIGHT_COLS.day3]) || 0;
+                const moreThan3 = parseFloat(row[WEIGHT_COLS.moreThan3]) || 0;
+                
+                // เก็บเฉพาะ row แรกที่พบ (ไม่รวมน้ำหนัก)
+                if (!stockMap[skuCode]) {
+                    stockMap[skuCode] = {
+                        day1: day1,
+                        day2: day2,
+                        day3: day3,
+                        moreThan3: moreThan3,
+                        productName: productName
+                    };
+                }
+                processedCount++;
+            }
+            
+            // Log file info
+            console.log('📊 STOCK File:', file.name);
+            console.log('   - Processed rows:', processedCount);
+            console.log('   - Unique SKU codes:', Object.keys(stockMap).length);
+            
+            // Log skipped rows (for warehouse 20 files)
+            if (isWarehouse20 && skippedRows.length > 0) {
+                console.log(`⏭️ Skipped ${skippedRows.length} rows (warehouse ≠ 20):`);
+                skippedRows.slice(0, 5).forEach(item => {
+                    console.log(`   Row ${item.row}: Warehouse="${item.warehouse}" - ${item.product}`);
+                });
+                if (skippedRows.length > 5) {
+                    console.log(`   ... และอีก ${skippedRows.length - 5} rows`);
+                }
+            }
+            
+            // Log warehouse 20 codes if present
+            const wh20Codes = ['23000194', '23000192', '23015350', '23000181', '23014042', '23015346', 
+                               '23000191', '23000189', '23015342', '23000186', '23000188', '23000187', 
+                               '23000193', '23000190', '23015321'];
+            const foundWh20 = wh20Codes.filter(code => stockMap[code]);
+            if (foundWh20.length > 0) {
+                console.log('✅ Warehouse 20 codes found:', foundWh20.length, '/', wh20Codes.length);
+                foundWh20.slice(0, 5).forEach(code => {
+                    const data = stockMap[code];
+                    const totalWeight = data.day1 + data.day2 + data.day3 + data.moreThan3;
+                    console.log(`   ${code}: ${data.productName} (รวม ${totalWeight.toFixed(2)} kg)`);
+                });
             }
             
             return stockMap;
