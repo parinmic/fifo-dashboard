@@ -17,7 +17,7 @@
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #F4F7FE;
             min-height: 100vh;
-            padding: 30px;
+            padding: 15px;
         }
 
         .container {
@@ -391,17 +391,188 @@
             box-shadow: none;
         }
 
+        /* Mobile First - Responsive Design */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
             h1 {
-                font-size: 1.5em;
+                font-size: 1.3em;
+                text-align: center;
+                margin-bottom: 15px;
             }
             
             .upload-grid {
-                max-width: 100%;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .upload-box {
+                width: 100%;
+                padding: 12px 15px;
+                justify-content: space-between;
+            }
+            
+            .upload-box-title {
+                font-size: 0.85em;
+            }
+            
+            .upload-box-number {
+                width: 22px;
+                height: 22px;
+                font-size: 0.75em;
+            }
+            
+            .upload-area {
+                min-width: 100px;
+                padding: 10px 15px;
+                min-height: 44px;
+            }
+            
+            .upload-icon {
+                font-size: 18px;
+            }
+            
+            .upload-text {
+                font-size: 0.85em;
+            }
+            
+            .file-name {
+                font-size: 0.8em;
+                max-width: 120px;
             }
             
             .status-section {
-                max-width: 100%;
+                width: 100%;
+                justify-content: center;
+                padding: 15px;
+                background: #F4F7FE;
+                border-radius: 8px;
+            }
+            
+            .status-text {
+                font-size: 0.9em;
+            }
+            
+            .process-btn {
+                padding: 12px 25px;
+                font-size: 1em;
+                min-height: 44px;
+                border-radius: 10px;
+            }
+            
+            .results-section {
+                padding: 15px;
+                border-radius: 15px;
+                margin-top: 15px;
+            }
+            
+            .results-title {
+                font-size: 1em;
+                text-align: center;
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .results-table-container {
+                max-height: 60vh;
+                border-radius: 8px;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .results-table {
+                font-size: 0.7em;
+                min-width: 1200px;
+            }
+            
+            .results-table th {
+                padding: 8px 5px;
+                font-size: 0.75em;
+            }
+            
+            .results-table td {
+                padding: 8px 5px;
+            }
+            
+            .results-table th.sub-header {
+                padding: 8px 5px;
+                font-size: 0.7em;
+            }
+            
+            .no-data {
+                padding: 20px;
+                font-size: 0.9em;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 400px) {
+            body {
+                padding: 8px;
+            }
+            
+            h1 {
+                font-size: 1.1em;
+            }
+            
+            .upload-box {
+                padding: 10px 12px;
+            }
+            
+            .upload-box-title {
+                font-size: 0.8em;
+            }
+            
+            .process-btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+            
+            .results-section {
+                padding: 10px;
+            }
+            
+            .results-table {
+                font-size: 0.65em;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .upload-area {
+                min-height: 48px;
+                min-width: 80px;
+            }
+            
+            .process-btn {
+                min-height: 48px;
+            }
+            
+            .results-table tr:active {
+                background: #E9EDF7;
+            }
+        }
+        
+        /* Landscape mode on mobile */
+        @media (max-width: 900px) and (orientation: landscape) {
+            .results-table-container {
+                max-height: 45vh;
+            }
+            
+            .upload-grid {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .upload-box {
+                width: auto;
+                flex: 1 1 45%;
+            }
+            
+            .status-section {
+                width: auto;
+                flex: 1 1 100%;
             }
         }
     </style>
