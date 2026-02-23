@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FIFO Real Time Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -865,6 +868,9 @@
                 // Render combined results
                 renderResults(allResults);
                 
+                // Save to Firebase
+                saveToFirebase(allResults);
+                
                 // Update title with date/time
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -1129,6 +1135,56 @@
             tbody.innerHTML = html;
             console.log(`Rendered ${processedItems.length} SKUs with FIFO issues`);
         }
+
+        // ==================== Firebase Integration ====================
+        
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDx9JzoWr1miSAIJN1fPSlM4JbXrixiphk",
+            authDomain: "fifo-dashboard.firebaseapp.com",
+            databaseURL: "https://fifo-dashboard-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "fifo-dashboard",
+            storageBucket: "fifo-dashboard.firebasestorage.app",
+            messagingSenderId: "859148676840",
+            appId: "1:859148676840:web:3aaea2c105eea84128635d"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Save data to Firebase
+        function saveToFirebase(results) {
+            const now = new Date();
+            const dataToSave = {
+                updatedAt: now.toISOString(),
+                updatedAtThai: now.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+                results: results
+            };
+            
+            database.ref('fifo-data').set(dataToSave)
+                .then(() => {
+                    console.log('บันทึกข้อมูลลง Firebase สำเร็จ!');
+                })
+                .catch((error) => {
+                    console.error('เกิดข้อผิดพลาดในการบันทึก:', error);
+                });
+        }
+
+        // Load data from Firebase (for mobile/real-time sync)
+        function loadFromFirebase() {
+            database.ref('fifo-data').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.results) {
+                    console.log('โหลดข้อมูลจาก Firebase:', data.updatedAtThai);
+                    renderResults(data.results);
+                    document.getElementById('resultsTitle').textContent = `การ FIFO จ่ายสินค้า อัพเดท ${data.updatedAtThai}`;
+                }
+            });
+        }
+
+        // Start listening for Firebase updates on page load
+        loadFromFirebase();
     </script>
 </body>
 </html>
