@@ -18,29 +18,31 @@
         }
 
         html {
+            position: fixed;
             width: 100%;
             height: 100%;
-            overflow-x: hidden;
-            overflow-y: auto;
-            overscroll-behavior: none;
+            overflow: hidden;
         }
 
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #F4F7FE;
             width: 100%;
-            min-height: 100%;
-            overflow-x: hidden;
-            overflow-y: auto;
+            height: 100%;
+            overflow: hidden;
             padding: 0;
             margin: 0;
-            overscroll-behavior: none;
         }
 
         .container {
             max-width: 1600px;
             margin: 0 auto;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
             padding: 15px;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: auto;
         }
 
         .main-layout {
@@ -125,6 +127,8 @@
             padding: 25px;
             box-shadow: 0 4px 20px rgba(67, 24, 255, 0.08);
             margin-top: 25px;
+            overflow: visible;
+            position: relative;
         }
 
         .results-title {
@@ -142,17 +146,33 @@
             overflow: auto;
             border-radius: 12px;
             overscroll-behavior: none;
-            -webkit-overflow-scrolling: auto;
-            touch-action: pan-x pan-y;
         }
 
         .results-table {
-            width: max-content;
-            min-width: 100%;
+            width: 100%;
             border-collapse: separate;
             border-spacing: 0;
             font-size: 0.8em;
             background: white;
+            table-layout: fixed;
+        }
+
+        /* Freeze คอลัมน์ ชื่อสินค้า */
+        .results-table th:first-child,
+        .results-table td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            background: white;
+        }
+
+        .results-table thead th:first-child {
+            z-index: 4;
+            background: linear-gradient(180deg, #4318FF 0%, #7551FF 50%, #7551FF 100%);
+        }
+
+        .results-table tbody td:first-child {
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
 
         .results-table th {
@@ -182,33 +202,6 @@
         .results-table tbody td:nth-child(8) { width: 8%; } /* STOCK & FIFO */
         .results-table tbody td:nth-child(9) { width: 14%; } /* ทะเบียนรถ */
         .results-table tbody td:nth-child(10) { width: 12%; } /* สถานะ */
-
-        /* Freeze คอลัมน์ชื่อสินค้า */
-        .results-table th:first-child,
-        .results-table td:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 3;
-            background: inherit;
-        }
-        
-        .results-table thead th:first-child {
-            z-index: 4;
-            background: linear-gradient(180deg, #4318FF 0%, #7551FF 50%, #7551FF 100%);
-        }
-        
-        .results-table tbody td:first-child {
-            background: white;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-        
-        .results-table tbody tr:nth-child(even) td:first-child {
-            background: #FAFCFE;
-        }
-        
-        .results-table tbody tr:hover td:first-child {
-            background: #F4F7FE;
-        }
 
         .results-table thead tr:first-child th {
             background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
@@ -279,11 +272,23 @@
             background: #F4F7FE;
         }
 
+        .results-table tr:hover td:first-child {
+            background: #F4F7FE;
+        }
+
         .results-table tr:nth-child(even) {
             background: #FAFCFE;
         }
 
+        .results-table tr:nth-child(even) td:first-child {
+            background: #FAFCFE;
+        }
+
         .results-table tr:nth-child(even):hover {
+            background: #F4F7FE;
+        }
+
+        .results-table tr:nth-child(even):hover td:first-child {
             background: #F4F7FE;
         }
 
@@ -485,6 +490,10 @@
                 padding: 10px;
                 border-radius: 12px;
                 margin-top: 0;
+                overflow: hidden;
+                contain: paint;
+                transform: translateZ(0);
+                -webkit-transform: translateZ(0);
             }
             
             .results-title {
@@ -496,11 +505,14 @@
             }
             
             .results-table-container {
-                max-height: 80vh;
+                max-height: 70vh;
                 border-radius: 8px;
                 -webkit-overflow-scrolling: auto;
                 overscroll-behavior: none;
-                touch-action: pan-x pan-y;
+                overflow: auto;
+                contain: strict;
+                transform: translateZ(0);
+                -webkit-transform: translateZ(0);
             }
             
             /* ตารางแบบ Mobile-Friendly */
@@ -589,7 +601,6 @@
             
             .results-table-container {
                 max-height: 70vh;
-                overscroll-behavior: none;
             }
         }
     </style>
@@ -656,16 +667,16 @@
             <div class="results-table-container">
                 <table class="results-table" cellspacing="0" cellpadding="0">
                     <colgroup>
-                        <col style="width: 120px; min-width: 120px;">
-                        <col style="width: 70px; min-width: 70px;">
-                        <col style="width: 60px; min-width: 60px;">
-                        <col style="width: 60px; min-width: 60px;">
-                        <col style="width: 60px; min-width: 60px;">
-                        <col style="width: 60px; min-width: 60px;">
-                        <col style="width: 60px; min-width: 60px;">
-                        <col style="width: 60px; min-width: 60px;">
-                        <col style="width: 100px; min-width: 100px;">
-                        <col style="width: 80px; min-width: 80px;">
+                        <col style="width: 18%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 14%;">
+                        <col style="width: 12%;">
                     </colgroup>
                     <thead>
                         <tr>
@@ -1231,45 +1242,43 @@
             });
         }
 
-        // ป้องกัน bounce บน iOS Safari
-        (function() {
-            // ป้องกัน document level bounce
-            document.body.addEventListener('touchmove', function(e) {
-                if (e.target === document.body || e.target === document.documentElement) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-
-            // จัดการ scroll ใน container
-            const container = document.querySelector('.container');
-            if (container) {
-                let startY = 0;
-                
-                container.addEventListener('touchstart', function(e) {
-                    startY = e.touches[0].pageY;
-                }, { passive: true });
-
-                container.addEventListener('touchmove', function(e) {
-                    const scrollTop = container.scrollTop;
-                    const scrollHeight = container.scrollHeight;
-                    const clientHeight = container.clientHeight;
-                    const currentY = e.touches[0].pageY;
-                    const isScrollingUp = currentY > startY;
-                    const isScrollingDown = currentY < startY;
-
-                    // ถ้า scroll ถึงขอบบน/ล่าง ให้หยุด
-                    if ((scrollTop <= 0 && isScrollingUp) || 
-                        (scrollTop + clientHeight >= scrollHeight && isScrollingDown)) {
-                        e.preventDefault();
+        // ป้องกัน bounce บน iOS Safari แต่ยังให้ scroll ในตารางได้
+        let startY = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        document.addEventListener('touchmove', function(e) {
+            // หา scrollable parent
+            let target = e.target;
+            let isInScrollable = false;
+            
+            while (target && target !== document.body) {
+                if (target.classList) {
+                    if (target.classList.contains('results-table-container') ||
+                        target.classList.contains('container')) {
+                        
+                        const scrollTop = target.scrollTop;
+                        const scrollHeight = target.scrollHeight;
+                        const clientHeight = target.clientHeight;
+                        const deltaY = startY - e.touches[0].clientY;
+                        
+                        // ถ้า scroll ได้ (ไม่ถึงขอบ) ให้ scroll ปกติ
+                        if ((deltaY > 0 && scrollTop < scrollHeight - clientHeight) ||
+                            (deltaY < 0 && scrollTop > 0)) {
+                            isInScrollable = true;
+                        }
+                        break;
                     }
-                }, { passive: false });
+                }
+                target = target.parentNode;
             }
-
-            // ป้องกัน zoom gesture
-            document.addEventListener('gesturestart', function(e) {
+            
+            if (!isInScrollable) {
                 e.preventDefault();
-            }, { passive: false });
-        })();
+            }
+        }, { passive: false });
 
         // Start listening for Firebase updates on page load
         loadFromFirebase();
