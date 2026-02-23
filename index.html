@@ -131,6 +131,7 @@
             border-spacing: 0;
             font-size: 0.8em;
             background: white;
+            table-layout: fixed;
         }
 
         .results-table th {
@@ -149,12 +150,27 @@
             -webkit-box-shadow: none !important;
         }
 
+        /* กำหนดความกว้างคอลัมน์ */
+        .results-table tbody td:nth-child(1) { width: 18%; } /* ชื่อสินค้า */
+        .results-table tbody td:nth-child(2) { width: 8%; } /* ยอดจ่าย */
+        .results-table tbody td:nth-child(3),
+        .results-table tbody td:nth-child(4),
+        .results-table tbody td:nth-child(5),
+        .results-table tbody td:nth-child(6),
+        .results-table tbody td:nth-child(7),
+        .results-table tbody td:nth-child(8) { width: 8%; } /* STOCK & FIFO */
+        .results-table tbody td:nth-child(9) { width: 14%; } /* ทะเบียนรถ */
+        .results-table tbody td:nth-child(10) { width: 12%; } /* สถานะ */
+
         .results-table thead tr:first-child th {
             background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
+            height: 42px;
         }
 
         .results-table thead tr:first-child th[rowspan="2"] {
             background: linear-gradient(180deg, #4318FF 0%, #7551FF 50%, #7551FF 100%);
+            height: 84px;
+            vertical-align: middle;
         }
 
         .results-table thead tr:nth-child(2) th {
@@ -163,6 +179,7 @@
             border: none !important;
             outline: none !important;
             box-shadow: none !important;
+            height: 42px;
         }
 
         .results-table thead tr:nth-child(2) {
@@ -178,6 +195,14 @@
             box-shadow: none !important;
             margin: 0;
             padding: 12px 10px;
+        }
+
+        /* หัวสีแดงสำหรับ FIFO */
+        .results-table th.fifo-header {
+            background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%) !important;
+        }
+        .results-table th.sub-header.fifo-sub {
+            background: #DC2626 !important;
         }
 
         .results-table thead {
@@ -431,7 +456,7 @@
             /* ตารางแบบ Mobile-Friendly */
             .results-table {
                 font-size: 0.75em;
-                min-width: 500px;
+                min-width: 700px;
             }
             
             .results-table th {
@@ -487,7 +512,7 @@
             
             .results-table {
                 font-size: 0.7em;
-                min-width: 450px;
+                min-width: 650px;
             }
             
             .results-table th {
@@ -579,23 +604,38 @@
             <div class="results-title" id="resultsTitle">การ FIFO จ่ายสินค้า</div>
             <div class="results-table-container">
                 <table class="results-table" cellspacing="0" cellpadding="0">
+                    <colgroup>
+                        <col style="width: 18%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 8%;">
+                        <col style="width: 14%;">
+                        <col style="width: 12%;">
+                    </colgroup>
                     <thead>
                         <tr>
                             <th rowspan="2">ชื่อสินค้า</th>
                             <th rowspan="2">ยอดจ่าย</th>
-                            <th colspan="4">สินค้าหลุดจ่าย FIFO</th>
-                            <th rowspan="2">ทะเบียนรถขนส่ง</th>
+                            <th colspan="3" style="border-bottom: 2px solid rgba(255,255,255,0.3);">STOCK ตอนนี้</th>
+                            <th colspan="3" class="fifo-header" style="border-bottom: 2px solid rgba(255,255,255,0.3);">สินค้าหลุดจ่าย FIFO</th>
+                            <th rowspan="2">ทะเบียนรถ</th>
                             <th rowspan="2">สถานะ</th>
                         </tr>
                         <tr>
                             <th class="sub-header">1 วัน</th>
                             <th class="sub-header">2 วัน</th>
                             <th class="sub-header">3 วัน</th>
-                            <th class="sub-header">4 วัน</th>
+                            <th class="sub-header fifo-sub">1 วัน</th>
+                            <th class="sub-header fifo-sub">2 วัน</th>
+                            <th class="sub-header fifo-sub">3 วัน</th>
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody">
-                        <tr><td colspan="8" class="no-data">กรุณาอัพโหลดไฟล์และกดปุ่ม "ประมวลผล"</td></tr>
+                        <tr><td colspan="10" class="no-data">กรุณาอัพโหลดไฟล์และกดปุ่ม "ประมวลผล"</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1071,17 +1111,19 @@
                 html += `<tr>
                     <td class="left">${escapeHtml(item.name)}</td>
                     <td>${formatVal(item.dispatch)}</td>
+                    <td>${formatVal(item.nowDay1)}</td>
+                    <td>${formatVal(item.nowDay2)}</td>
+                    <td>${formatVal(item.nowDay3)}</td>
                     <td>${item.diffDay1}</td>
                     <td>${item.diffDay2}</td>
                     <td>${item.diffDay3}</td>
-                    <td>${item.diffMoreThan3}</td>
                     <td class="left">${escapeHtml(item.trucksDisplay)}</td>
                     <td class="${statusClass}">${statusText}</td>
                 </tr>`;
             });
             
             if (processedItems.length === 0) {
-                html = '<tr><td colspan="8" class="no-data">ไม่พบสินค้าที่หลุดจ่าย FIFO</td></tr>';
+                html = '<tr><td colspan="10" class="no-data">ไม่พบสินค้าที่หลุดจ่าย FIFO</td></tr>';
             }
             
             tbody.innerHTML = html;
