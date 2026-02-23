@@ -152,12 +152,12 @@
         }
 
         .results-table {
-            width: 100%;
-            border-collapse: collapse;
+            width: max-content;
+            min-width: 100%;
+            border-collapse: separate;
             border-spacing: 0;
             font-size: 0.8em;
             background: white;
-            table-layout: fixed;
         }
 
         .results-table th {
@@ -187,6 +187,33 @@
         .results-table tbody td:nth-child(8) { width: 8%; } /* STOCK & FIFO */
         .results-table tbody td:nth-child(9) { width: 14%; } /* ทะเบียนรถ */
         .results-table tbody td:nth-child(10) { width: 12%; } /* สถานะ */
+
+        /* Freeze คอลัมน์ชื่อสินค้า */
+        .results-table th:first-child,
+        .results-table td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            background: inherit;
+        }
+        
+        .results-table thead th:first-child {
+            z-index: 4;
+            background: linear-gradient(180deg, #4318FF 0%, #7551FF 50%, #7551FF 100%);
+        }
+        
+        .results-table tbody td:first-child {
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .results-table tbody tr:nth-child(even) td:first-child {
+            background: #FAFCFE;
+        }
+        
+        .results-table tbody tr:hover td:first-child {
+            background: #F4F7FE;
+        }
 
         .results-table thead tr:first-child th {
             background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
@@ -634,16 +661,16 @@
             <div class="results-table-container">
                 <table class="results-table" cellspacing="0" cellpadding="0">
                     <colgroup>
-                        <col style="width: 18%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 8%;">
-                        <col style="width: 14%;">
-                        <col style="width: 12%;">
+                        <col style="width: 120px; min-width: 120px;">
+                        <col style="width: 70px; min-width: 70px;">
+                        <col style="width: 60px; min-width: 60px;">
+                        <col style="width: 60px; min-width: 60px;">
+                        <col style="width: 60px; min-width: 60px;">
+                        <col style="width: 60px; min-width: 60px;">
+                        <col style="width: 60px; min-width: 60px;">
+                        <col style="width: 60px; min-width: 60px;">
+                        <col style="width: 100px; min-width: 100px;">
+                        <col style="width: 80px; min-width: 80px;">
                     </colgroup>
                     <thead>
                         <tr>
