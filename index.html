@@ -22,6 +22,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            touch-action: none;
         }
 
         body {
@@ -32,17 +33,19 @@
             overflow: hidden;
             padding: 0;
             margin: 0;
+            touch-action: none;
         }
 
         .container {
             max-width: 1600px;
             margin: 0 auto;
             height: 100%;
-            overflow-y: auto;
+            overflow-y: scroll;
             overflow-x: hidden;
             padding: 15px;
-            overscroll-behavior: none;
             -webkit-overflow-scrolling: auto;
+            overscroll-behavior: none;
+            touch-action: pan-y;
         }
 
         .main-layout {
@@ -143,8 +146,9 @@
             max-height: 500px;
             overflow: auto;
             border-radius: 12px;
-            overscroll-behavior: contain;
+            overscroll-behavior: none;
             -webkit-overflow-scrolling: auto;
+            touch-action: pan-x pan-y;
         }
 
         .results-table {
@@ -473,7 +477,8 @@
                 max-height: 80vh;
                 border-radius: 8px;
                 -webkit-overflow-scrolling: auto;
-                overscroll-behavior: contain;
+                overscroll-behavior: none;
+                touch-action: pan-x pan-y;
             }
             
             /* ตารางแบบ Mobile-Friendly */
@@ -562,6 +567,7 @@
             
             .results-table-container {
                 max-height: 70vh;
+                overscroll-behavior: none;
             }
         }
     </style>
@@ -1204,26 +1210,44 @@
         }
 
         // ป้องกัน bounce บน iOS Safari
-        document.addEventListener('touchmove', function(e) {
-            // อนุญาตให้ scroll ภายใน .results-table-container เท่านั้น
-            let target = e.target;
-            let isScrollable = false;
-            
-            while (target && target !== document.body) {
-                if (target.classList && (
-                    target.classList.contains('results-table-container') ||
-                    target.classList.contains('container')
-                )) {
-                    isScrollable = true;
-                    break;
+        (function() {
+            // ป้องกัน document level bounce
+            document.body.addEventListener('touchmove', function(e) {
+                if (e.target === document.body || e.target === document.documentElement) {
+                    e.preventDefault();
                 }
-                target = target.parentNode;
+            }, { passive: false });
+
+            // จัดการ scroll ใน container
+            const container = document.querySelector('.container');
+            if (container) {
+                let startY = 0;
+                
+                container.addEventListener('touchstart', function(e) {
+                    startY = e.touches[0].pageY;
+                }, { passive: true });
+
+                container.addEventListener('touchmove', function(e) {
+                    const scrollTop = container.scrollTop;
+                    const scrollHeight = container.scrollHeight;
+                    const clientHeight = container.clientHeight;
+                    const currentY = e.touches[0].pageY;
+                    const isScrollingUp = currentY > startY;
+                    const isScrollingDown = currentY < startY;
+
+                    // ถ้า scroll ถึงขอบบน/ล่าง ให้หยุด
+                    if ((scrollTop <= 0 && isScrollingUp) || 
+                        (scrollTop + clientHeight >= scrollHeight && isScrollingDown)) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
             }
-            
-            if (!isScrollable) {
+
+            // ป้องกัน zoom gesture
+            document.addEventListener('gesturestart', function(e) {
                 e.preventDefault();
-            }
-        }, { passive: false });
+            }, { passive: false });
+        })();
 
         // Start listening for Firebase updates on page load
         loadFromFirebase();
