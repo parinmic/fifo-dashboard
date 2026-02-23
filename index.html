@@ -154,25 +154,6 @@
             border-spacing: 0;
             font-size: 0.8em;
             background: white;
-            table-layout: fixed;
-        }
-
-        /* Freeze คอลัมน์ ชื่อสินค้า */
-        .results-table th:first-child,
-        .results-table td:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 3;
-            background: white;
-        }
-
-        .results-table thead th:first-child {
-            z-index: 4;
-            background: linear-gradient(180deg, #4318FF 0%, #7551FF 50%, #7551FF 100%);
-        }
-
-        .results-table tbody td:first-child {
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
 
         .results-table th {
@@ -192,16 +173,18 @@
         }
 
         /* กำหนดความกว้างคอลัมน์ */
-        .results-table tbody td:nth-child(1) { width: 18%; } /* ชื่อสินค้า */
-        .results-table tbody td:nth-child(2) { width: 8%; } /* ยอดจ่าย */
-        .results-table tbody td:nth-child(3),
+        .results-table th:first-child,
+        .results-table td:nth-child(1) { width: 150px; min-width: 150px; max-width: 150px; } /* ชื่อสินค้า - fixed width for sticky */
+        .results-table tbody td:nth-child(2) { width: 7%; } /* ยอดสั่ง */
+        .results-table tbody td:nth-child(3) { width: 7%; } /* ยอดจ่าย */
         .results-table tbody td:nth-child(4),
         .results-table tbody td:nth-child(5),
         .results-table tbody td:nth-child(6),
         .results-table tbody td:nth-child(7),
-        .results-table tbody td:nth-child(8) { width: 8%; } /* STOCK & FIFO */
-        .results-table tbody td:nth-child(9) { width: 14%; } /* ทะเบียนรถ */
-        .results-table tbody td:nth-child(10) { width: 12%; } /* สถานะ */
+        .results-table tbody td:nth-child(8),
+        .results-table tbody td:nth-child(9) { width: 7%; } /* STOCK & FIFO */
+        .results-table tbody td:nth-child(10) { width: 13%; } /* ทะเบียนรถ */
+        .results-table tbody td:nth-child(11) { width: 11%; } /* สถานะ */
 
         .results-table thead tr:first-child th {
             background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
@@ -268,11 +251,34 @@
             font-weight: 500;
         }
 
-        .results-table tr:hover {
-            background: #F4F7FE;
+        /* Freeze first column (ชื่อสินค้า) */
+        .results-table th:first-child,
+        .results-table td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            background: inherit;
+        }
+
+        .results-table th:first-child {
+            background: linear-gradient(180deg, #4318FF 0%, #7551FF 50%, #7551FF 100%);
+            z-index: 4;
+        }
+
+        .results-table td:first-child {
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .results-table tr:nth-child(even) td:first-child {
+            background: #FAFCFE;
         }
 
         .results-table tr:hover td:first-child {
+            background: #F4F7FE;
+        }
+
+        .results-table tr:hover {
             background: #F4F7FE;
         }
 
@@ -280,15 +286,7 @@
             background: #FAFCFE;
         }
 
-        .results-table tr:nth-child(even) td:first-child {
-            background: #FAFCFE;
-        }
-
         .results-table tr:nth-child(even):hover {
-            background: #F4F7FE;
-        }
-
-        .results-table tr:nth-child(even):hover td:first-child {
             background: #F4F7FE;
         }
 
@@ -490,7 +488,10 @@
                 padding: 10px;
                 border-radius: 12px;
                 margin-top: 0;
-                overflow: visible;
+                overflow: hidden;
+                contain: paint;
+                transform: translateZ(0);
+                -webkit-transform: translateZ(0);
             }
             
             .results-title {
@@ -504,9 +505,12 @@
             .results-table-container {
                 max-height: 70vh;
                 border-radius: 8px;
-                -webkit-overflow-scrolling: touch;
+                -webkit-overflow-scrolling: auto;
                 overscroll-behavior: none;
                 overflow: auto;
+                contain: strict;
+                transform: translateZ(0);
+                -webkit-transform: translateZ(0);
             }
             
             /* ตารางแบบ Mobile-Friendly */
@@ -675,7 +679,8 @@
                     <thead>
                         <tr>
                             <th rowspan="2">ชื่อสินค้า</th>
-                            <th rowspan="2">ยอดจ่าย</th>
+                            <th rowspan="2">ยอดสั่ง</th>
+                            <th rowspan="2">จ่ายแล้ว</th>
                             <th colspan="3" style="border-bottom: 2px solid rgba(255,255,255,0.3);">STOCK ตอนนี้</th>
                             <th colspan="3" class="fifo-header" style="border-bottom: 2px solid rgba(255,255,255,0.3);">สินค้าหลุดจ่าย FIFO</th>
                             <th rowspan="2">ทะเบียนรถ</th>
@@ -691,7 +696,7 @@
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody">
-                        <tr><td colspan="10" class="no-data">กรุณาอัพโหลดไฟล์และกดปุ่ม "ประมวลผล"</td></tr>
+                        <tr><td colspan="11" class="no-data">กรุณาอัพโหลดไฟล์และกดปุ่ม "ประมวลผล"</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -904,18 +909,19 @@
                 const stockMapStart20 = file1 ? processStockFile(file1) : {};
                 const stockMapNow10 = file2 ? processStockFile(file2) : {};
                 const stockMapNow20 = file3 ? processStockFile(file3) : {};
-                const dispatchData = file4 ? processDispatchFile(file4) : { dispatchMap: {}, truckMap: {} };
+                const dispatchData = file4 ? processDispatchFile(file4) : { dispatchMap: {}, orderMap: {}, truckMap: {} };
                 const dispatchMap = dispatchData.dispatchMap;
+                const orderMap = dispatchData.orderMap;
                 const truckMap = dispatchData.truckMap;
                 
                 const allResults = [];
                 
                 // Process warehouse 10
-                const results10 = getResultsForWarehouse(stockMapStart10, stockMapNow10, dispatchMap, truckMap, "10");
+                const results10 = getResultsForWarehouse(stockMapStart10, stockMapNow10, dispatchMap, orderMap, truckMap, "10");
                 allResults.push(...results10);
                 
                 // Process warehouse 20
-                const results20 = getResultsForWarehouse(stockMapStart20, stockMapNow20, dispatchMap, truckMap, "20");
+                const results20 = getResultsForWarehouse(stockMapStart20, stockMapNow20, dispatchMap, orderMap, truckMap, "20");
                 allResults.push(...results20);
                 
                 // Render combined results
@@ -994,13 +1000,16 @@
             
             // CSV มี row แรกเป็นชื่อบริษัท, row ที่ 2 เป็น header
             // Column U (index 20) = rProduct_code = รหัสสินค้า
+            // Column X (index 23) = rStock_wgt = ยอดสั่ง
             // Column AD (index 29) = rAllocate_stock_wgt = ปริมาณยอดจ่าย
             // Column BN (index 65) = ทะเบียนรถขนส่ง
             const PRODUCT_CODE_COL = 20;
+            const ORDER_QTY_COL = 23; // คอลัมน์ X = ยอดสั่ง
             const DISPATCH_QTY_COL = 29;
             const TRUCK_PLATE_COL = 65;
             
             const dispatchMap = {};
+            const orderMap = {}; // SKU -> ยอดสั่ง (คอลัมน์ X)
             const truckMap = {}; // SKU -> array of truck plates (where AD=0)
             
             // เริ่มจาก row 2 (skip header rows)
@@ -1009,10 +1018,18 @@
                 if (!row || !row[PRODUCT_CODE_COL]) continue;
                 
                 const productCode = String(row[PRODUCT_CODE_COL]).trim();
+                const orderQty = parseFloat(row[ORDER_QTY_COL]) || 0;
                 const dispatchQty = parseFloat(row[DISPATCH_QTY_COL]) || 0;
                 // เอาเฉพาะตัวเลขจากทะเบียนรถ
                 const rawTruckPlate = row[TRUCK_PLATE_COL] ? String(row[TRUCK_PLATE_COL]).trim() : '';
                 const truckPlate = rawTruckPlate.replace(/[^0-9]/g, '');
+                
+                // สะสมยอดสั่งถ้ามีหลาย row สำหรับรหัสเดียวกัน
+                if (orderMap[productCode]) {
+                    orderMap[productCode] += orderQty;
+                } else {
+                    orderMap[productCode] = orderQty;
+                }
                 
                 // สะสมยอดจ่ายถ้ามีหลาย row สำหรับรหัสเดียวกัน
                 if (dispatchMap[productCode]) {
@@ -1036,12 +1053,13 @@
                 truckMapArray[code] = Array.from(truckMap[code]);
             }
             
+            console.log('Order Map:', Object.keys(orderMap).length, 'products');
             console.log('Dispatch Map:', Object.keys(dispatchMap).length, 'products');
             console.log('Truck Map:', Object.keys(truckMapArray).length, 'products with pending trucks');
-            return { dispatchMap, truckMap: truckMapArray };
+            return { dispatchMap, orderMap, truckMap: truckMapArray };
         }
         
-        function getResultsForWarehouse(stockMapStart, stockMapNow, dispatchMap, truckMap, warehouseFilter) {
+        function getResultsForWarehouse(stockMapStart, stockMapNow, dispatchMap, orderMap, truckMap, warehouseFilter) {
             const filteredSKU = MAS_SKU.filter(item => item.warehouse === warehouseFilter);
             const results = [];
             
@@ -1049,6 +1067,7 @@
                 const startData = stockMapStart[item.code];
                 const nowData = stockMapNow[item.code];
                 const dispatchQty = dispatchMap[item.code] || null;
+                const orderQty = orderMap[item.code] || null;
                 const trucks = truckMap[item.code] || [];
                 results.push({
                     warehouse: item.warehouse,
@@ -1064,6 +1083,8 @@
                     nowDay2: nowData ? nowData.day2 : null,
                     nowDay3: nowData ? nowData.day3 : null,
                     nowMoreThan3: nowData ? nowData.moreThan3 : null,
+                    // ยอดสั่ง (คอลัมน์ X)
+                    order: orderQty,
                     // ยอดจ่าย
                     dispatch: dispatchQty,
                     // ทะเบียนรถ (AD=0)
@@ -1169,6 +1190,7 @@
                 
                 html += `<tr>
                     <td class="left">${escapeHtml(item.name)}</td>
+                    <td>${formatVal(item.order)}</td>
                     <td>${formatVal(item.dispatch)}</td>
                     <td>${formatVal(item.nowDay1)}</td>
                     <td>${formatVal(item.nowDay2)}</td>
@@ -1182,7 +1204,7 @@
             });
             
             if (processedItems.length === 0) {
-                html = '<tr><td colspan="10" class="no-data">ไม่พบสินค้าที่หลุดจ่าย FIFO</td></tr>';
+                html = '<tr><td colspan="11" class="no-data">ไม่พบสินค้าที่หลุดจ่าย FIFO</td></tr>';
             }
             
             tbody.innerHTML = html;
