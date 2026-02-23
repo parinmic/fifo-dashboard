@@ -490,10 +490,7 @@
                 padding: 10px;
                 border-radius: 12px;
                 margin-top: 0;
-                overflow: hidden;
-                contain: paint;
-                transform: translateZ(0);
-                -webkit-transform: translateZ(0);
+                overflow: visible;
             }
             
             .results-title {
@@ -507,12 +504,9 @@
             .results-table-container {
                 max-height: 70vh;
                 border-radius: 8px;
-                -webkit-overflow-scrolling: auto;
+                -webkit-overflow-scrolling: touch;
                 overscroll-behavior: none;
                 overflow: auto;
-                contain: strict;
-                transform: translateZ(0);
-                -webkit-transform: translateZ(0);
             }
             
             /* ตารางแบบ Mobile-Friendly */
