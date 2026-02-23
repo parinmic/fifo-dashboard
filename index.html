@@ -16,11 +16,17 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: auto;
+        }
+
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #F4F7FE;
             min-height: 100vh;
             padding: 15px;
+            overflow-x: hidden;
         }
 
         .container {
@@ -126,6 +132,8 @@
             max-height: 500px;
             overflow: auto;
             border-radius: 12px;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: auto;
         }
 
         .results-table {
@@ -453,7 +461,8 @@
             .results-table-container {
                 max-height: 80vh;
                 border-radius: 8px;
-                -webkit-overflow-scrolling: touch;
+                -webkit-overflow-scrolling: auto;
+                overscroll-behavior: contain;
             }
             
             /* ตารางแบบ Mobile-Friendly */
