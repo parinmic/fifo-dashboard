@@ -157,6 +157,7 @@
             border-spacing: 0;
             font-size: 0.8em;
             background: white;
+            table-layout: fixed;
         }
 
         .results-table th {
@@ -178,16 +179,16 @@
         /* กำหนดความกว้างคอลัมน์ */
         .results-table th:first-child,
         .results-table td:nth-child(1) { width: 150px; min-width: 150px; max-width: 150px; } /* ชื่อสินค้า - fixed width for sticky */
-        .results-table tbody td:nth-child(2) { width: 6%; } /* ยอดสั่ง */
-        .results-table tbody td:nth-child(3) { width: 6%; } /* จ่ายแล้ว */
+        .results-table tbody td:nth-child(2),
+        .results-table tbody td:nth-child(3) { width: 55px; min-width: 55px; } /* ยอดสั่ง, จ่ายแล้ว */
         .results-table tbody td:nth-child(4),
         .results-table tbody td:nth-child(5),
         .results-table tbody td:nth-child(6),
         .results-table tbody td:nth-child(7),
         .results-table tbody td:nth-child(8),
-        .results-table tbody td:nth-child(9) { width: 5%; } /* STOCK & FIFO */
-        .results-table tbody td:nth-child(10) { width: 18%; } /* ทะเบียนรถ */
-        .results-table tbody td:nth-child(11) { width: 10%; } /* สถานะ */
+        .results-table tbody td:nth-child(9) { width: 50px; min-width: 50px; max-width: 50px; } /* STOCK & FIFO */
+        .results-table tbody td:nth-child(10) { } /* ทะเบียนรถ - auto */
+        .results-table tbody td:nth-child(11) { width: 70px; min-width: 70px; } /* สถานะ */
 
         .results-table thead tr:first-child th {
             background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
@@ -670,16 +671,16 @@
                 <table class="results-table" cellspacing="0" cellpadding="0">
                     <colgroup>
                         <col style="width: 150px;">
-                        <col style="width: 6%;">
-                        <col style="width: 6%;">
-                        <col style="width: 5%;">
-                        <col style="width: 5%;">
-                        <col style="width: 5%;">
-                        <col style="width: 5%;">
-                        <col style="width: 5%;">
-                        <col style="width: 5%;">
-                        <col style="width: 18%;">
-                        <col style="width: 10%;">
+                        <col style="width: 55px;">
+                        <col style="width: 55px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: auto;">
+                        <col style="width: 70px;">
                     </colgroup>
                     <thead>
                         <tr>
