@@ -324,20 +324,20 @@
         .results-table td:nth-child(3) {
             border-right: 2px solid rgba(0,0,0,0.1);
         }
-        .results-table th:nth-child(6),
-        .results-table td:nth-child(6) {
+        .results-table th:nth-child(7),
+        .results-table td:nth-child(7) {
             border-right: 2px solid rgba(0,0,0,0.1);
         }
-        .results-table th:nth-child(9),
-        .results-table td:nth-child(9) {
-            border-right: 2px solid rgba(0,0,0,0.1);
-        }
-        .results-table th:nth-child(12),
-        .results-table td:nth-child(12) {
+        .results-table th:nth-child(11),
+        .results-table td:nth-child(11) {
             border-right: 2px solid rgba(0,0,0,0.1);
         }
         .results-table th:nth-child(15),
         .results-table td:nth-child(15) {
+            border-right: 2px solid rgba(0,0,0,0.1);
+        }
+        .results-table th:nth-child(19),
+        .results-table td:nth-child(19) {
             border-right: 2px solid rgba(0,0,0,0.1);
         }
 
@@ -654,7 +654,7 @@
             </div>
             
             <div class="upload-box">
-                <div class="upload-box-title"><span class="upload-box-number">3</span> ตอนนี้ 0010</div>
+                <div class="upload-box-title"><span class="upload-box-number">3</span> Cold ต้นวัน</div>
                 <div class="upload-area" id="dropZone2" data-index="2">
                     <span class="upload-icon">+</span>
                     <span class="upload-text">เลือก</span>
@@ -663,7 +663,7 @@
             </div>
             
             <div class="upload-box">
-                <div class="upload-box-title"><span class="upload-box-number">4</span> ตอนนี้ 20</div>
+                <div class="upload-box-title"><span class="upload-box-number">4</span> ตอนนี้ 0010</div>
                 <div class="upload-area" id="dropZone3" data-index="3">
                     <span class="upload-icon">+</span>
                     <span class="upload-text">เลือก</span>
@@ -672,7 +672,7 @@
             </div>
             
             <div class="upload-box">
-                <div class="upload-box-title"><span class="upload-box-number">5</span> ยอดจ่าย</div>
+                <div class="upload-box-title"><span class="upload-box-number">5</span> ตอนนี้ 20</div>
                 <div class="upload-area" id="dropZone4" data-index="4">
                     <span class="upload-icon">+</span>
                     <span class="upload-text">เลือก</span>
@@ -680,8 +680,26 @@
                 <input type="file" class="file-input" id="fileInput4" data-index="4" accept=".xlsx,.xls,.csv">
             </div>
             
+            <div class="upload-box">
+                <div class="upload-box-title"><span class="upload-box-number">6</span> Cold ตอนนี้</div>
+                <div class="upload-area" id="dropZone5" data-index="5">
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text">เลือก</span>
+                </div>
+                <input type="file" class="file-input" id="fileInput5" data-index="5" accept=".xlsx,.xls,.csv">
+            </div>
+            
+            <div class="upload-box">
+                <div class="upload-box-title"><span class="upload-box-number">7</span> ยอดจ่าย</div>
+                <div class="upload-area" id="dropZone6" data-index="6">
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text">เลือก</span>
+                </div>
+                <input type="file" class="file-input" id="fileInput6" data-index="6" accept=".xlsx,.xls,.csv">
+            </div>
+            
             <div class="status-section">
-                <span class="status-text"><span class="status-count" id="uploadCount">0</span>/5</span>
+                <span class="status-text"><span class="status-count" id="uploadCount">0</span>/7</span>
                 <button class="process-btn" id="processBtn" onclick="processData()">ประมวลผล</button>
             </div>
         </div>
@@ -707,6 +725,10 @@
                         <col style="width: 50px; min-width: 50px; max-width: 50px;">
                         <col style="width: 50px; min-width: 50px; max-width: 50px;">
                         <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
+                        <col style="width: 50px; min-width: 50px; max-width: 50px;">
                         <col style="width: auto;">
                         <col style="width: 70px;">
                     </colgroup>
@@ -715,10 +737,10 @@
                             <th rowspan="2">ชื่อสินค้า</th>
                             <th rowspan="2">ยอดสั่ง</th>
                             <th rowspan="2">จ่ายแล้ว</th>
-                            <th colspan="3" style="border-bottom: 2px solid rgba(255,255,255,0.3);">STOCK ต้นวัน</th>
-                            <th colspan="3" style="border-bottom: 2px solid rgba(255,255,255,0.3); background: linear-gradient(135deg, #059669 0%, #10B981 100%);">STOCK ควรจะเป็น</th>
-                            <th colspan="3" style="border-bottom: 2px solid rgba(255,255,255,0.3);">STOCK ตอนนี้</th>
-                            <th colspan="3" class="fifo-header" style="border-bottom: 2px solid rgba(255,255,255,0.3);">สินค้าหลุดจ่าย FIFO</th>
+                            <th colspan="4" style="border-bottom: 2px solid rgba(255,255,255,0.3);">STOCK ต้นวัน</th>
+                            <th colspan="4" style="border-bottom: 2px solid rgba(255,255,255,0.3); background: linear-gradient(135deg, #059669 0%, #10B981 100%);">STOCK ควรจะเป็น</th>
+                            <th colspan="4" style="border-bottom: 2px solid rgba(255,255,255,0.3);">STOCK ตอนนี้</th>
+                            <th colspan="4" class="fifo-header" style="border-bottom: 2px solid rgba(255,255,255,0.3);">สินค้าหลุดจ่าย FIFO</th>
                             <th rowspan="2">ทะเบียนรถ</th>
                             <th rowspan="2">สถานะ</th>
                         </tr>
@@ -726,19 +748,23 @@
                             <th class="sub-header">1 วัน</th>
                             <th class="sub-header">2 วัน</th>
                             <th class="sub-header">3 วัน</th>
+                            <th class="sub-header">Cold</th>
                             <th class="sub-header" style="background: #059669 !important;">1 วัน</th>
                             <th class="sub-header" style="background: #059669 !important;">2 วัน</th>
                             <th class="sub-header" style="background: #059669 !important;">3 วัน</th>
+                            <th class="sub-header" style="background: #059669 !important;">Cold</th>
                             <th class="sub-header">1 วัน</th>
                             <th class="sub-header">2 วัน</th>
                             <th class="sub-header">3 วัน</th>
+                            <th class="sub-header">Cold</th>
                             <th class="sub-header fifo-sub">1 วัน</th>
                             <th class="sub-header fifo-sub">2 วัน</th>
                             <th class="sub-header fifo-sub">3 วัน</th>
+                            <th class="sub-header fifo-sub">Cold</th>
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody">
-                        <tr><td colspan="17" class="no-data">กรุณาอัพโหลดไฟล์และกดปุ่ม "ประมวลผล"</td></tr>
+                        <tr><td colspan="21" class="no-data">กรุณาอัพโหลดไฟล์และกดปุ่ม "ประมวลผล"</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -819,7 +845,7 @@
             {warehouse: "20", code: "23015321", name: "หัวติดลิ้น"}
         ];
 
-        const MAX_FILES = 5;
+        const MAX_FILES = 7;
         let uploadedFiles = new Array(MAX_FILES).fill(null); // Array of { name, workbook } or null
 
         const uploadCount = document.getElementById('uploadCount');
@@ -936,11 +962,13 @@
         function processData() {
             const file0 = uploadedFiles[0]; // STOCK ต้นวัน 0010
             const file1 = uploadedFiles[1]; // STOCK ต้นวัน 20
-            const file2 = uploadedFiles[2]; // STOCK ตอนนี้ 0010
-            const file3 = uploadedFiles[3]; // STOCK ตอนนี้ 20
-            const file4 = uploadedFiles[4]; // ยอดจ่ายสินค้า
+            const file2 = uploadedFiles[2]; // STOCK Cold ต้นวัน
+            const file3 = uploadedFiles[3]; // STOCK ตอนนี้ 0010
+            const file4 = uploadedFiles[4]; // STOCK ตอนนี้ 20
+            const file5 = uploadedFiles[5]; // STOCK Cold ตอนนี้
+            const file6 = uploadedFiles[6]; // ยอดจ่ายสินค้า
             
-            if (!file0 && !file1 && !file2 && !file3) {
+            if (!file0 && !file1 && !file2 && !file3 && !file4 && !file5) {
                 alert('กรุณาอัพโหลดไฟล์อย่างน้อย 1 ไฟล์');
                 return;
             }
@@ -949,9 +977,11 @@
                 // Build stock maps
                 const stockMapStart10 = file0 ? processStockFile(file0) : {};
                 const stockMapStart20 = file1 ? processStockFile(file1) : {};
-                const stockMapNow10 = file2 ? processStockFile(file2) : {};
-                const stockMapNow20 = file3 ? processStockFile(file3) : {};
-                const dispatchData = file4 ? processDispatchFile(file4) : { dispatchMap: {}, orderMap: {}, truckMap: {} };
+                const stockMapStartCold = file2 ? processColdFile(file2) : {};
+                const stockMapNow10 = file3 ? processStockFile(file3) : {};
+                const stockMapNow20 = file4 ? processStockFile(file4) : {};
+                const stockMapNowCold = file5 ? processColdFile(file5) : {};
+                const dispatchData = file6 ? processDispatchFile(file6) : { dispatchMap: {}, orderMap: {}, truckMap: {} };
                 const dispatchMap = dispatchData.dispatchMap;
                 const orderMap = dispatchData.orderMap;
                 const truckMap = dispatchData.truckMap;
@@ -959,11 +989,11 @@
                 const allResults = [];
                 
                 // Process warehouse 10
-                const results10 = getResultsForWarehouse(stockMapStart10, stockMapNow10, dispatchMap, orderMap, truckMap, "10");
+                const results10 = getResultsForWarehouse(stockMapStart10, stockMapNow10, stockMapStartCold, stockMapNowCold, dispatchMap, orderMap, truckMap, "10");
                 allResults.push(...results10);
                 
                 // Process warehouse 20
-                const results20 = getResultsForWarehouse(stockMapStart20, stockMapNow20, dispatchMap, orderMap, truckMap, "20");
+                const results20 = getResultsForWarehouse(stockMapStart20, stockMapNow20, stockMapStartCold, stockMapNowCold, dispatchMap, orderMap, truckMap, "20");
                 allResults.push(...results20);
                 
                 // Render combined results
@@ -1096,6 +1126,45 @@
             return stockMap;
         }
         
+        // Process Cold file (Cold storage data)
+        function processColdFile(file) {
+            const workbook = file.workbook;
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            
+            // Convert sheet to array (include headers)
+            const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            
+            // สมมติว่าไฟล์ Cold มีโครงสร้างคล้าย STOCK แต่มีแค่คอลัมน์ Cold
+            // ปรับตามโครงสร้างจริงของไฟล์
+            const SAP_COL = 20; // รหัส SAP
+            const COLD_WEIGHT_COL = 9; // น้ำหนัก Cold (ปรับตามไฟล์จริง)
+            
+            const coldMap = {};
+            let processedCount = 0;
+            
+            for (let i = 2; i < rawData.length; i++) {
+                const row = rawData[i];
+                if (!row || !row[SAP_COL]) continue;
+                
+                const sapCode = String(row[SAP_COL]).trim();
+                const skuCode = sapCode.length > 10 ? sapCode.substring(10) : sapCode;
+                
+                const coldWeight = parseFloat(row[COLD_WEIGHT_COL]) || 0;
+                
+                if (!coldMap[skuCode]) {
+                    coldMap[skuCode] = coldWeight;
+                }
+                processedCount++;
+            }
+            
+            console.log('📊 COLD File:', file.name);
+            console.log('   - Processed rows:', processedCount);
+            console.log('   - Unique SKU codes:', Object.keys(coldMap).length);
+            
+            return coldMap;
+        }
+        
         // Process dispatch file (ยอดจ่ายสินค้า CSV)
         function processDispatchFile(file) {
             const workbook = file.workbook;
@@ -1166,13 +1235,15 @@
             return { dispatchMap, orderMap, truckMap: truckMapArray };
         }
         
-        function getResultsForWarehouse(stockMapStart, stockMapNow, dispatchMap, orderMap, truckMap, warehouseFilter) {
+        function getResultsForWarehouse(stockMapStart, stockMapNow, stockMapStartCold, stockMapNowCold, dispatchMap, orderMap, truckMap, warehouseFilter) {
             const filteredSKU = MAS_SKU.filter(item => item.warehouse === warehouseFilter);
             const results = [];
             
             filteredSKU.forEach((item) => {
                 const startData = stockMapStart[item.code];
                 const nowData = stockMapNow[item.code];
+                const startCold = stockMapStartCold[item.code] || null;
+                const nowCold = stockMapNowCold[item.code] || null;
                 const dispatchQty = dispatchMap[item.code] || null;
                 const orderQty = orderMap[item.code] || null;
                 const trucks = truckMap[item.code] || [];
@@ -1184,11 +1255,13 @@
                     startDay1: startData ? startData.day1 : null,
                     startDay2: startData ? startData.day2 : null,
                     startDay3: startData ? startData.day3 : null,
+                    startCold: startCold,
                     startMoreThan3: startData ? startData.moreThan3 : null,
                     // STOCK ตอนนี้
                     nowDay1: nowData ? nowData.day1 : null,
                     nowDay2: nowData ? nowData.day2 : null,
                     nowDay3: nowData ? nowData.day3 : null,
+                    nowCold: nowCold,
                     nowMoreThan3: nowData ? nowData.moreThan3 : null,
                     // ยอดสั่ง (คอลัมน์ X)
                     order: orderQty,
@@ -1221,6 +1294,7 @@
             
             results.forEach((item) => {
                 // คำนวณสินค้าคงเหลือ (FIFO - ลบจากอายุมากสุดก่อน)
+                // หมายเหตุ: Cold ไม่เข้าร่วมการคำนวณ FIFO เป็นเพียงข้อมูลแสดงผลเท่านั้น
                 let remaining = {
                     day1: item.startDay1 !== null ? item.startDay1 : 0,
                     day2: item.startDay2 !== null ? item.startDay2 : 0,
@@ -1254,6 +1328,7 @@
                     remaining.day1 -= deduct;
                     dispatchLeft -= deduct;
                 }
+                // หมายเหตุ: Cold ไม่เข้าร่วมการลบสินค้า (ไม่มีการคำนวณ FIFO)
                 
                 const hasStartData = item.startDay1 !== null || item.startDay2 !== null || item.startDay3 !== null || item.startMoreThan3 !== null;
                 const hasNowData = item.nowDay1 !== null || item.nowDay2 !== null || item.nowDay3 !== null || item.nowMoreThan3 !== null;
@@ -1264,6 +1339,7 @@
                 const diffMoreThan3 = calcDiff(item.nowMoreThan3, remaining.moreThan3);
                 const canShowDiff = hasStartData && hasNowData;
                 
+                // Cold ไม่เข้าร่วมการตรวจสอบ FIFO
                 const hasNonZeroDiff = diffDay1 > 0 || diffDay2 > 0 || diffDay3 > 0 || diffMoreThan3 > 0;
                 if (!canShowDiff || !hasNonZeroDiff) return;
                 
@@ -1282,7 +1358,11 @@
                     // STOCK ที่ควรจะเป็น (remaining)
                     expectedDay1: remaining.day1,
                     expectedDay2: remaining.day2,
-                    expectedDay3: remaining.day3
+                    expectedDay3: remaining.day3,
+                    // Cold แสดงเป็น 0 ในคอลัมน์ "ควรจะเป็น" เพราะไม่เข้าร่วม FIFO
+                    expectedCold: 0,
+                    // diffCold = 0 เพราะไม่มีการคำนวณ
+                    diffCold: 0
                 });
             });
             
@@ -1309,22 +1389,26 @@
                     <td>${formatVal(item.startDay1)}</td>
                     <td>${formatVal(item.startDay2)}</td>
                     <td>${formatVal(item.startDay3)}</td>
+                    <td>${formatVal(item.startCold)}</td>
                     <td>${formatVal(item.expectedDay1)}</td>
                     <td>${formatVal(item.expectedDay2)}</td>
                     <td>${formatVal(item.expectedDay3)}</td>
+                    <td>-</td>
                     <td>${formatVal(item.nowDay1)}</td>
                     <td>${formatVal(item.nowDay2)}</td>
                     <td>${formatVal(item.nowDay3)}</td>
+                    <td>${formatVal(item.nowCold)}</td>
                     <td class="${item.diffDay1 > 0 ? 'fifo-alert' : ''}">${item.diffDay1}</td>
                     <td class="${item.diffDay2 > 0 ? 'fifo-alert' : ''}">${item.diffDay2}</td>
                     <td class="${item.diffDay3 > 0 ? 'fifo-alert' : ''}">${item.diffDay3}</td>
+                    <td>-</td>
                     <td class="left">${escapeHtml(item.trucksDisplay)}</td>
                     <td class="${statusClass}">${statusText}</td>
                 </tr>`;
             });
             
             if (processedItems.length === 0) {
-                html = '<tr><td colspan="17" class="no-data">ไม่พบสินค้าที่หลุดจ่าย FIFO</td></tr>';
+                html = '<tr><td colspan="21" class="no-data">ไม่พบสินค้าที่หลุดจ่าย FIFO</td></tr>';
             }
             
             tbody.innerHTML = html;
