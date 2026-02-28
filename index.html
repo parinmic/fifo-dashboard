@@ -1153,6 +1153,7 @@
         }
         
         // Process Cold file (Cold storage data)
+        // รวมน้ำหนักจากทุกคอลัมน์อายุ (1วัน, 2วัน, 3วัน, >3วัน)
         function processColdFile(file) {
             const workbook = file.workbook;
             const sheetName = workbook.SheetNames[0];
@@ -1161,10 +1162,14 @@
             // Convert sheet to array (include headers)
             const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
             
-            // สมมติว่าไฟล์ Cold มีโครงสร้างคล้าย STOCK แต่มีแค่คอลัมน์ Cold
-            // ปรับตามโครงสร้างจริงของไฟล์
+            // โครงสร้างเหมือน STOCK file - รวมน้ำหนักทุกอายุ
+            const WEIGHT_COLS = {
+                day1: 9,      // น้ำหนัก 1 วัน
+                day2: 12,     // น้ำหนัก 2 วัน
+                day3: 15,     // น้ำหนัก 3 วัน
+                moreThan3: 18 // น้ำหนัก > 3 วัน
+            };
             const SAP_COL = 20; // รหัส SAP
-            const COLD_WEIGHT_COL = 9; // น้ำหนัก Cold (ปรับตามไฟล์จริง)
             
             const coldMap = {};
             let processedCount = 0;
@@ -1176,10 +1181,15 @@
                 const sapCode = String(row[SAP_COL]).trim();
                 const skuCode = sapCode.length > 10 ? sapCode.substring(10) : sapCode;
                 
-                const coldWeight = parseFloat(row[COLD_WEIGHT_COL]) || 0;
+                // รวมน้ำหนักจากทุกคอลัมน์อายุ
+                const day1 = parseFloat(row[WEIGHT_COLS.day1]) || 0;
+                const day2 = parseFloat(row[WEIGHT_COLS.day2]) || 0;
+                const day3 = parseFloat(row[WEIGHT_COLS.day3]) || 0;
+                const moreThan3 = parseFloat(row[WEIGHT_COLS.moreThan3]) || 0;
+                const totalColdWeight = day1 + day2 + day3 + moreThan3;
                 
                 if (!coldMap[skuCode]) {
-                    coldMap[skuCode] = coldWeight;
+                    coldMap[skuCode] = totalColdWeight;
                 }
                 processedCount++;
             }
